@@ -4,8 +4,8 @@ let descText="Description lives here";
 let img = new Image();
 let imgSource="Monster Images/greatSword.webp";
 let themeButton={x:0,y:550,width:100,height:50};
-let smashButton={x:0,y:110,width:50,height:200};
-let passButton={x:550,y:110,width:50,height:200};
+let smashButton={x:0,y:120,width:50,height:200};
+let passButton={x:550,y:120,width:50,height:200};
 let backButton={x:400,y:550,width:200,height:50};
 let roarButton={x:100,y:550,width:100,height:50};
 let themeAudio=new Audio("Monster Theme/B/button-3.mp3");
@@ -2112,10 +2112,12 @@ function draw() {
         // Main text for saying what is done
         ctx.font= "40px serif";
         ctx.fillText("Monster Hunter: Smash or Pass", 10, 50);
+        ctx.font= "20px serif";
+        ctx.fillText("Made by: mjr117 and Benwor",10,90)
         
         // Title text for the monster
         ctx.font = "20px serif";
-        ctx.fillText(titleText,10,100);
+        ctx.fillText(titleText,10,110);
 
         // Current Count text
         ctx.font = "40px serif";
