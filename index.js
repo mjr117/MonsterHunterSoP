@@ -9,7 +9,8 @@ let passButton={x:550,y:120,width:50,height:200};
 let backButton={x:400,y:550,width:200,height:50};
 let roarButton={x:100,y:550,width:100,height:50};
 let themeAudio=new Audio("Monster Theme/B/button-3.mp3");
-let shoutout = new Audio("Monster Theme/!other/easterEgg.mp3")
+let shoutout = new Audio("Monster Theme/!other/easterEgg.mp3");
+let rawr = new Audio("Monster Theme/!other/khezu.mp3");
 let monsterIndex=0;
 let initalSetup=false;
 let smashCount=0;
@@ -2098,9 +2099,16 @@ function draw() {
                 themeAudio.volume=audioVolume;
                 monsters[monsterIndex].backStep();
             }else{
-                // don't know what to do here yet
-                //alert('clicked outside buttons');
-                if(getRandomInt(1, 50) == 37){
+                var rollInt=getRandomInt(1, 50);
+                if (monsters[monsterIndex].name!="Khezu"||monsters[monsterIndex].name!="Red Khezu") {
+                    if (rollInt<21){
+                        rawr.play();
+                    }
+                } else if (monsters[monsterIndex].name!="Giggi"||monsters[monsterIndex].name!="Gigginox"||monsters[monsterIndex].name!="Balefull Gigginox"){
+                    if (rollInt<21){
+                        shoutout.play();
+                    }
+                }else if(rollInt== 37){
                     shoutout.play();
                 }
             }
