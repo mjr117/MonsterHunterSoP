@@ -11,12 +11,14 @@ let roarButton={x:100,y:550,width:100,height:50};
 let themeAudio=new Audio("Monster Theme/B/button-3.mp3");
 let shoutout = new Audio("Monster Theme/!other/easterEgg.mp3");
 let rawr = new Audio("Monster Theme/!other/khezu.mp3");
+let introAudio = new Audio("Monster Theme/!other/easterEgg.mp3");
 let monsterIndex=0;
 let initalSetup=false;
 let smashCount=0;
 let passCount=0;
 let leftCount=0;
 let audioVolume=.5;
+let inSplash=true;
 
 // Setting up class for each smash or pass section
 class Monster {
@@ -2075,114 +2077,159 @@ leftCount=monsters.length;
 function draw() {
     const canvas = document.getElementById("tutorial");
     const volume = document.getElementById("volume-control")
-    if (!initalSetup){
-        // Adding the button actually button
-        canvas.addEventListener('click', function(evt) {
-            var mousePos = getMousePos(canvas, evt);
-            if (isInside(mousePos,themeButton)) {
-                if (themeAudio.paused) {
-                    themeAudio.play();
-                }
-                else {
-                    themeAudio.pause();
-                }
-            }else if(isInside(mousePos,smashButton)){
-                themeAudio.pause(); themeAudio.currentTime = 0;
+    if (inSplash){
+        if (!initalSetup){
+            volume.addEventListener("change", function(e) {
+                //console.log(e.currentTarget.value);
+                
+                audioVolume = e.currentTarget.value / 200;
                 themeAudio.volume=audioVolume;
-                monsters[monsterIndex].smashing(1);
-            }else if(isInside(mousePos,passButton)){
-                themeAudio.pause(); themeAudio.currentTime = 0;
-                themeAudio.volume=audioVolume;
-                monsters[monsterIndex].smashing(-1);
-            }else if(isInside(mousePos,backButton)){
-                themeAudio.pause(); themeAudio.currentTime = 0;
-                themeAudio.volume=audioVolume;
-                monsters[monsterIndex].backStep();
-            }else{
-                var rollInt=getRandomInt(1, 50);
-                if (monsters[monsterIndex].name!="Khezu"||monsters[monsterIndex].name!="Red Khezu") {
-                    if (rollInt<21){
-                        rawr.play();
+                roarAudio.volume=audioVolume;
+            });
+            canvas.addEventListener('click',function(evt) {
+                var mousePos = getMousePos(canvas, evt);
+                if (inSplash) {
+                    if (isInside(mousePos,themeButton)) {
+                        if (introAudio.paused) {
+                            introAudio.play();
+                        }
+                        else {
+                            introAudio.pause();
+                        }
+                    }else{
+                        inSplash=false;
+                        initalSetup=false;
                     }
-                } else if (monsters[monsterIndex].name!="Giggi"||monsters[monsterIndex].name!="Gigginox"||monsters[monsterIndex].name!="Balefull Gigginox"){
-                    if (rollInt<21){
+                    draw();
+                }
+            });
+            if (canvas.getContext) {
+            }
+            initalSetup=true;
+        }
+        if (canvas.getContext) {
+            const ctx = canvas.getContext("2d");
+
+            // clear the inital space
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle="black";
+
+            // Main text for saying what is done
+            ctx.font= "40px serif";
+            ctx.fillText("Monster Hunter: Smash or Pass", 10, 50);
+            ctx.font= "20px serif";
+            ctx.fillText("Made by: mjr117 and Benwor",10,90)
+
+            // Button stuff
+            ctx.fillStyle='#810066';
+            ctx.fillRect(themeButton.x,themeButton.y,themeButton.width,themeButton.height);
+            ctx.fillStyle='#f5bd05';
+            ctx.font = "20px serif";
+            ctx.fillText("Theme",20,580);
+        }
+    }else{
+        if (!initalSetup){
+            // Adding the button actually button
+            canvas.addEventListener('click', function(evt) {
+                var mousePos = getMousePos(canvas, evt);
+                if (isInside(mousePos,themeButton)) {
+                    if (themeAudio.paused) {
+                        themeAudio.play();
+                    }
+                    else {
+                        themeAudio.pause();
+                    }
+                }else if(isInside(mousePos,smashButton)){
+                    themeAudio.pause(); themeAudio.currentTime = 0;
+                    themeAudio.volume=audioVolume;
+                    monsters[monsterIndex].smashing(1);
+                }else if(isInside(mousePos,passButton)){
+                    themeAudio.pause(); themeAudio.currentTime = 0;
+                    themeAudio.volume=audioVolume;
+                    monsters[monsterIndex].smashing(-1);
+                }else if(isInside(mousePos,backButton)){
+                    themeAudio.pause(); themeAudio.currentTime = 0;
+                    themeAudio.volume=audioVolume;
+                    monsters[monsterIndex].backStep();
+                }else{
+                    var rollInt=getRandomInt(1, 50);
+                    if (monsters[monsterIndex].name!="Khezu"||monsters[monsterIndex].name!="Red Khezu") {
+                        if (rollInt<21){
+                            rawr.play();
+                        }
+                    } else if (monsters[monsterIndex].name!="Giggi"||monsters[monsterIndex].name!="Gigginox"||monsters[monsterIndex].name!="Balefull Gigginox"){
+                        if (rollInt<21){
+                            shoutout.play();
+                        }
+                    }else if(rollInt== 37){
                         shoutout.play();
                     }
-                }else if(rollInt== 37){
-                    shoutout.play();
                 }
-            }
-        }, false);
-        volume.addEventListener("change", function(e) {
-            //console.log(e.currentTarget.value);
-            
-            audioVolume = e.currentTarget.value / 200;
-            themeAudio.volume=audioVolume;
-            roarAudio.volume=audioVolume;
-            });
-        initalSetup=true;
-    }
-    monsters[monsterIndex].show();
-    if (canvas.getContext) {
-        const ctx = canvas.getContext("2d");
-
-        // clear the inital space
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle="black";
-
-        // Main text for saying what is done
-        ctx.font= "40px serif";
-        ctx.fillText("Monster Hunter: Smash or Pass", 10, 50);
-        ctx.font= "20px serif";
-        ctx.fillText("Made by: mjr117 and Benwor",10,90)
-        
-        // Title text for the monster
-        ctx.font = "20px serif";
-        ctx.fillText(titleText,10,110);
-
-        // Current Count text
-        ctx.font = "40px serif";
-        ctx.fillText(smashCount+" : "+leftCount+" : "+passCount,150,590);
-        //console.log(smashCount,leftCount,passCount);
-
-        // Description text for the monster
-        ctx.font = "20px serif";
-        printAtWordWrap(ctx,descText,20,390,25,540);
-        
-        // Place main image of monster
-        img.onload = () => {
-            ctx.drawImage(img,150,150,200,200);
+            }, false);
+            initalSetup=true;
         }
-        img.src=imgSource;
+        monsters[monsterIndex].show();
+        if (canvas.getContext) {
+            const ctx = canvas.getContext("2d");
 
-        // setting up button click
-        ctx.fillStyle='#810066';
-        ctx.fillRect(themeButton.x,themeButton.y,themeButton.width,themeButton.height);
-        ctx.fillStyle='pink';
-        ctx.fillRect(smashButton.x,smashButton.y,smashButton.width,smashButton.height);
-        ctx.fillStyle='green';
-        ctx.fillRect(passButton.x,passButton.y,passButton.width,passButton.height);
-        ctx.fillStyle='black';
-        ctx.fillRect(backButton.x,backButton.y,backButton.width,backButton.height);
-        // The text for the buttons
-        ctx.fillStyle='#f5bd05';
-        ctx.font = "20px serif";
-        ctx.fillText("Theme",20,580);
-        ctx.fillStyle='white';
-        ctx.font = "20px serif";
-        ctx.fillText("Go back",480,580);
-        ctx.save();
-        ctx.rotate(Math.PI/2);
-        ctx.fillStyle='black';
-        ctx.font = "20px serif";
-        ctx.fillText("SMASH",180,-20);
-        ctx.restore();
-        ctx.save();
-        ctx.rotate(-Math.PI/2);
-        ctx.fillStyle='black';
-        ctx.font = "20px serif";
-        ctx.fillText("PASS",-230,580);
-        ctx.restore();
+            // clear the inital space
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle="black";
+
+            // Main text for saying what is done
+            ctx.font= "40px serif";
+            ctx.fillText("Monster Hunter: Smash or Pass", 10, 50);
+            ctx.font= "20px serif";
+            ctx.fillText("Made by: mjr117 and Benwor",10,90)
+            
+            // Title text for the monster
+            ctx.font = "20px serif";
+            ctx.fillText(titleText,10,110);
+
+            // Current Count text
+            ctx.font = "40px serif";
+            ctx.fillText(smashCount+" : "+leftCount+" : "+passCount,150,590);
+            //console.log(smashCount,leftCount,passCount);
+
+            // Description text for the monster
+            ctx.font = "20px serif";
+            printAtWordWrap(ctx,descText,20,390,25,540);
+            
+            // Place main image of monster
+            img.onload = () => {
+                ctx.drawImage(img,150,150,200,200);
+            }
+            img.src=imgSource;
+
+            // setting up button click
+            ctx.fillStyle='#810066';
+            ctx.fillRect(themeButton.x,themeButton.y,themeButton.width,themeButton.height);
+            ctx.fillStyle='pink';
+            ctx.fillRect(smashButton.x,smashButton.y,smashButton.width,smashButton.height);
+            ctx.fillStyle='green';
+            ctx.fillRect(passButton.x,passButton.y,passButton.width,passButton.height);
+            ctx.fillStyle='black';
+            ctx.fillRect(backButton.x,backButton.y,backButton.width,backButton.height);
+            // The text for the buttons
+            ctx.fillStyle='#f5bd05';
+            ctx.font = "20px serif";
+            ctx.fillText("Theme",20,580);
+            ctx.fillStyle='white';
+            ctx.font = "20px serif";
+            ctx.fillText("Go back",480,580);
+            ctx.save();
+            ctx.rotate(Math.PI/2);
+            ctx.fillStyle='black';
+            ctx.font = "20px serif";
+            ctx.fillText("SMASH",180,-20);
+            ctx.restore();
+            ctx.save();
+            ctx.rotate(-Math.PI/2);
+            ctx.fillStyle='black';
+            ctx.font = "20px serif";
+            ctx.fillText("PASS",-230,580);
+            ctx.restore();
+        }
     }
 }
 
