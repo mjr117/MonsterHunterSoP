@@ -2078,15 +2078,26 @@ function draw() {
         canvas.addEventListener('click', function(evt) {
             var mousePos = getMousePos(canvas, evt);
             // stop audio for next button press
-            themeAudio.pause(); themeAudio.currentTime = 0;
-            themeAudio.volume=audioVolume;
+            //themeAudio.pause(); themeAudio.currentTime = 0;
+            //themeAudio.volume=audioVolume;
             if (isInside(mousePos,themeButton)) {
-                themeAudio.play();
+                if (themeAudio.paused) {
+                    themeAudio.play();
+                }
+                else {
+                    themeAudio.pause();
+                }
             }else if(isInside(mousePos,smashButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].smashing(1);
             }else if(isInside(mousePos,passButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].smashing(-1);
             }else if(isInside(mousePos,backButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].backStep();
             }else{
                 // don't know what to do here yet
@@ -2095,6 +2106,7 @@ function draw() {
         }, false);
         volume.addEventListener("change", function(e) {
             //console.log(e.currentTarget.value);
+            
             audioVolume = e.currentTarget.value / 200;
             themeAudio.volume=audioVolume;
             roarAudio.volume=audioVolume;
