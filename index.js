@@ -9,6 +9,7 @@ let passButton={x:550,y:120,width:50,height:200};
 let backButton={x:400,y:550,width:200,height:50};
 let roarButton={x:100,y:550,width:100,height:50};
 let themeAudio=new Audio("Monster Theme/B/button-3.mp3");
+let shoutout = new Audio("Monster Theme/!other/easterEgg.mp3")
 let monsterIndex=0;
 let initalSetup=false;
 let smashCount=0;
@@ -2077,24 +2078,36 @@ function draw() {
         // Adding the button actually button
         canvas.addEventListener('click', function(evt) {
             var mousePos = getMousePos(canvas, evt);
-            // stop audio for next button press
-            themeAudio.pause(); themeAudio.currentTime = 0;
-            themeAudio.volume=audioVolume;
             if (isInside(mousePos,themeButton)) {
-                themeAudio.play();
+                if (themeAudio.paused) {
+                    themeAudio.play();
+                }
+                else {
+                    themeAudio.pause();
+                }
             }else if(isInside(mousePos,smashButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].smashing(1);
             }else if(isInside(mousePos,passButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].smashing(-1);
             }else if(isInside(mousePos,backButton)){
+                themeAudio.pause(); themeAudio.currentTime = 0;
+                themeAudio.volume=audioVolume;
                 monsters[monsterIndex].backStep();
             }else{
                 // don't know what to do here yet
                 //alert('clicked outside buttons');
+                if(getRandomInt(1, 50) == 37){
+                    shoutout.play();
+                }
             }
         }, false);
         volume.addEventListener("change", function(e) {
             //console.log(e.currentTarget.value);
+            
             audioVolume = e.currentTarget.value / 200;
             themeAudio.volume=audioVolume;
             roarAudio.volume=audioVolume;
@@ -2209,3 +2222,10 @@ function printAtWordWrap( context , text, x, y, lineHeight, fitWidth) {
         context.fillText( words.join(' '), x, y + (lineHeight*currentLine) );
     }
 }
+
+function getRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); // The maximum is exclusive and the minimum is inclusive
+  }
+  
