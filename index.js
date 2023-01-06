@@ -8,10 +8,11 @@ let smashButton={x:0,y:120,width:50,height:200};
 let passButton={x:550,y:120,width:50,height:200};
 let backButton={x:400,y:550,width:200,height:50};
 let roarButton={x:100,y:550,width:100,height:50};
+let introButton={x:0,y:550,width:150,height:50};
 let themeAudio=new Audio("Monster Theme/B/button-3.mp3");
 let shoutout = new Audio("Monster Theme/!other/easterEgg.mp3");
 let rawr = new Audio("Monster Theme/!other/khezu.mp3");
-let introAudio = new Audio("Monster Theme/!other/easterEgg.mp3");
+let introAudio = new Audio("Monster Theme/!other/introAudio.mp3");
 let monsterIndex=0;
 let initalSetup=false;
 let smashCount=0;
@@ -19,6 +20,16 @@ let passCount=0;
 let leftCount=0;
 let audioVolume=.5;
 let inSplash=true;
+let introTextL1="[Voiced intro below click AFTER adjusting volume bar]";
+let introTextL2="Hello there fellow hunter. As you may be aware, some hunters want to smash monsters."+
+" They tend to carry a hammer or hunt horn focusing on blunt damage. Sorry wrong smash."+
+" There are also some hunter that want to smash monsters -no further details here."+
+" After clicking on this screen, the test will start."+
+" The test is setup like Tinder but with buttons instead of swiping."+
+" Each monster has a description and a piece of music to give a certain feeling [and some easter eggs if you click the background some]."+
+" Unlike Tinder, there is a back button to undo a choice or to slowly go back to previous choice."+
+" There is a counter at the bottom of the test saying how many monsters are smashed, left, and passed. Colons seperate these values."+
+" It is recommended to lower the volume before starting the test, some monsters are loud. NOW BEGIN!";
 
 // Setting up class for each smash or pass section
 class Monster {
@@ -1233,27 +1244,6 @@ const json= [
      "theme": "Apex"
     },
     {
-     "name": "Giggi",
-     "type": "Flying Wyvern",
-     "title": "-",
-     "desc": "Remarkably fecund wyvern larvae that can flourish in any dark environment. They survive by leeching onto other animals, sucking their blood, and then converting it to toxins. Giggi victims are advised to shake them off by rolling vigorously on the ground.",
-     "theme": "Khezu"
-    },
-    {
-     "name": "Gigginox",
-     "type": "Flying Wyvern",
-     "title": "Creeping Venom Wyvern",
-     "desc": "Wyverns that inhabit the Tundra. Gigginox live in darkness and thus have degraded vision; they detect prey via body heat, then attack with poison. When excited, their color changes and parts of their body harden. Extremely fertile, laying innumerable eggs.",
-     "theme": "Khezu"
-    },
-    {
-     "name": "Baleful Gigginox",
-     "type": "Flying Wyvern",
-     "title": "Electric Creeping Wyvern",
-     "desc": "A subspecies of Gigginox that uses electricity to stun prey. It is believed to be a random mutation, and as such, sightings are relatively rare. It may be possible to weaken its electrical powers by destroying the capacitor organs on its body.",
-     "theme": "Khezu"
-    },
-    {
      "name": "Akantor",
      "type": "Flying Wyvern",
      "title": "Infernal Black God",
@@ -1314,6 +1304,27 @@ const json= [
      "type": "Flying Wyvern",
      "title": "Charging Wyvern",
      "desc": "A ghastly Khezu variant with a crimson hue and a much more aggressive temperament. Their electrical organs are further developed as well, giving them a wider variety of attacks to disable and ensnare prey.",
+     "theme": "Khezu"
+    },
+    {
+     "name": "Giggi",
+     "type": "Flying Wyvern",
+     "title": "-",
+     "desc": "Remarkably fecund wyvern larvae that can flourish in any dark environment. They survive by leeching onto other animals, sucking their blood, and then converting it to toxins. Giggi victims are advised to shake them off by rolling vigorously on the ground.",
+     "theme": "Khezu"
+    },
+    {
+     "name": "Gigginox",
+     "type": "Flying Wyvern",
+     "title": "Creeping Venom Wyvern",
+     "desc": "Wyverns that inhabit the Tundra. Gigginox live in darkness and thus have degraded vision; they detect prey via body heat, then attack with poison. When excited, their color changes and parts of their body harden. Extremely fertile, laying innumerable eggs.",
+     "theme": "Khezu"
+    },
+    {
+     "name": "Baleful Gigginox",
+     "type": "Flying Wyvern",
+     "title": "Electric Creeping Wyvern",
+     "desc": "A subspecies of Gigginox that uses electricity to stun prey. It is believed to be a random mutation, and as such, sightings are relatively rare. It may be possible to weaken its electrical powers by destroying the capacitor organs on its body.",
      "theme": "Khezu"
     },
     {
@@ -2084,12 +2095,15 @@ function draw() {
                 
                 audioVolume = e.currentTarget.value / 200;
                 themeAudio.volume=audioVolume;
-                roarAudio.volume=audioVolume;
+                introAudio.volume=audioVolume;
+                rawr.volume=audioVolume;
+                introAudio.volume=audioVolume;
+                shoutout.volume=audioVolume;
             });
             canvas.addEventListener('click',function(evt) {
                 var mousePos = getMousePos(canvas, evt);
                 if (inSplash) {
-                    if (isInside(mousePos,themeButton)) {
+                    if (isInside(mousePos,introButton)) {
                         if (introAudio.paused) {
                             introAudio.play();
                         }
@@ -2099,8 +2113,9 @@ function draw() {
                     }else{
                         inSplash=false;
                         initalSetup=false;
+                        introAudio.pause();
+                        draw();
                     }
-                    draw();
                 }
             });
             if (canvas.getContext) {
@@ -2122,10 +2137,14 @@ function draw() {
 
             // Button stuff
             ctx.fillStyle='#810066';
-            ctx.fillRect(themeButton.x,themeButton.y,themeButton.width,themeButton.height);
+            ctx.fillRect(introButton.x,introButton.y,introButton.width,introButton.height);
             ctx.fillStyle='#f5bd05';
             ctx.font = "20px serif";
-            ctx.fillText("Theme",20,580);
+            ctx.fillText("Play intro audio",00,580);
+
+            ctx.fillStyle='black';
+            printAtWordWrap(ctx,introTextL1,20,150,25,540);
+            printAtWordWrap(ctx,introTextL2,20,180,25,540);
         }
     }else{
         if (!initalSetup){
@@ -2153,12 +2172,12 @@ function draw() {
                     monsters[monsterIndex].backStep();
                 }else{
                     var rollInt=getRandomInt(1, 50);
-                    if (monsters[monsterIndex].name!="Khezu"||monsters[monsterIndex].name!="Red Khezu") {
-                        if (rollInt<21){
+                    if (monsters[monsterIndex].name=="Khezu"||monsters[monsterIndex].name=="Red Khezu") {
+                        if (rollInt<41){
                             rawr.play();
                         }
-                    } else if (monsters[monsterIndex].name!="Giggi"||monsters[monsterIndex].name!="Gigginox"||monsters[monsterIndex].name!="Balefull Gigginox"){
-                        if (rollInt<21){
+                    } else if ((monsters[monsterIndex].name=="Giggi"||monsters[monsterIndex].name=="Gigginox")||monsters[monsterIndex].name=="Baleful Gigginox"){
+                        if (rollInt<41){
                             shoutout.play();
                         }
                     }else if(rollInt== 37){
